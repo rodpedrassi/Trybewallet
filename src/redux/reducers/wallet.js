@@ -1,9 +1,11 @@
-const initialState = [];
+import { OPTION_CURRENCIES } from '../actions';
+
+const initialState = {};
 
 function walletReducer(state = initialState, action) {
   switch (action.type) {
-  case 'a':
-    return [...state];
+  case OPTION_CURRENCIES:
+    return action.value;
   default: return state;
   }
 }

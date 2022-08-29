@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import '../css/header.css';
+import '../css/izi.css';
 
 class Header extends Component {
   state = {

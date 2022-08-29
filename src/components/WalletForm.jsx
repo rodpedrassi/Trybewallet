@@ -1,10 +1,33 @@
 import React, { Component } from 'react';
+import '../css/izi.css';
+import { connect } from 'react-redux';
+// import PropTypes from 'prop-types';
+import fetchCurrency from '../services/api';
+import { optionCurrencies as optionCurrenciesAction } from '../redux/actions/index';
 
 class WalletForm extends Component {
+  async componentDidMount() {
+    await this.getCurrencies();
+  }
+
+  getCurrencies = async () => {
+    const data = await fetchCurrency();
+    const arrayCurrencies = Object.keys(data);
+    const { dispatch } = this.props;
+    const newCurrencies = arrayCurrencies.filter((e) => e !== 'USDT');
+    const wallet = {
+      currencies: newCurrencies,
+    };
+
+    dispatch(optionCurrenciesAction(wallet));
+  };
+
   render() {
+    const { wallet: { currencies } } = this.props;
+    console.log('dentro do render', currencies);
     return (
       <div>
-        <form>
+        <form className="form-group">
           <label htmlFor="value">
             Valor:
             <input
@@ -22,9 +45,14 @@ class WalletForm extends Component {
               id="currency"
               data-testid="currency-input"
             >
-              <option value="hehexd">hehexd</option>
-              <option value="hehexd2">hehexd2</option>
-              <option value="hehexd3">hehexd3</option>
+              {/* {newArrayCurrency.map((currency) => (
+                <option
+                  key={ currency }
+                  value={ currency }
+                >
+                  {currency}
+                </option>
+              ))} */}
             </select>
           </label>
 
@@ -71,5 +99,7 @@ class WalletForm extends Component {
     );
   }
 }
-
-export default WalletForm;
+const mapStateToProps = (state) => ({
+  wallet: state.wallet,
+});
+export default connect(mapStateToProps)(WalletForm);
