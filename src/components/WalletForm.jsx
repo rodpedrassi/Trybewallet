@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../css/izi.css';
 import { connect } from 'react-redux';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import fetchCurrency from '../services/api';
 import { optionCurrencies as optionCurrenciesAction } from '../redux/actions/index';
 
@@ -45,14 +45,14 @@ class WalletForm extends Component {
               id="currency"
               data-testid="currency-input"
             >
-              {/* {newArrayCurrency.map((currency) => (
+              {currencies && currencies.map((currency) => (
                 <option
                   key={ currency }
                   value={ currency }
                 >
                   {currency}
                 </option>
-              ))} */}
+              ))}
             </select>
           </label>
 
@@ -99,6 +99,10 @@ class WalletForm extends Component {
     );
   }
 }
+WalletForm.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  wallet: PropTypes.shape().isRequired,
+};
 const mapStateToProps = (state) => ({
   wallet: state.wallet,
 });
