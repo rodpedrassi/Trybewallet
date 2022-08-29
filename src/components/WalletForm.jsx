@@ -3,28 +3,53 @@ import '../css/izi.css';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import fetchCurrency from '../services/api';
-import { optionCurrencies as optionCurrenciesAction } from '../redux/actions/index';
+import {
+  optionCurrencies as optionCurrenciesAction,
+  saveExpenses as saveExpensesAction,
+} from '../redux/actions/index';
 
 class WalletForm extends Component {
+  state = {
+    id: 0,
+    value: '',
+    currency: 'USD',
+    method: 'Dinheiro',
+    tag: 'Alimentação',
+    description: '',
+    exchangeRates: {},
+  };
+
   async componentDidMount() {
     await this.getCurrencies();
   }
+
+  handleChange = ({ target }) => {
+    const { name, value } = target;
+    this.setState({
+      [name]: value,
+    }, () => {
+      // this.handleButtonDisabled();
+    });
+  };
 
   getCurrencies = async () => {
     const data = await fetchCurrency();
     const arrayCurrencies = Object.keys(data);
     const { dispatch } = this.props;
     const newCurrencies = arrayCurrencies.filter((e) => e !== 'USDT');
-    const wallet = {
-      currencies: newCurrencies,
-    };
+    dispatch(optionCurrenciesAction(newCurrencies));
+  };
 
-    dispatch(optionCurrenciesAction(wallet));
+  handleClick = async () => {
+    const { dispatch } = this.props;
+    const actualCurrency = await fetchCurrency();
+    this.setState(({ exchangeRates: actualCurrency }));
+    dispatch(saveExpensesAction(this.state));
+    this.setState((prev) => ({ id: prev.id + 1 }));
   };
 
   render() {
     const { wallet: { currencies } } = this.props;
-    console.log('dentro do render', currencies);
     return (
       <div>
         <form className="form-group">
@@ -35,6 +60,7 @@ class WalletForm extends Component {
               name="value"
               id="value"
               data-testid="value-input"
+              onChange={ (e) => this.handleChange(e) }
             />
           </label>
 
@@ -44,6 +70,7 @@ class WalletForm extends Component {
               name="currency"
               id="currency"
               data-testid="currency-input"
+              onChange={ (e) => this.handleChange(e) }
             >
               {currencies && currencies.map((currency) => (
                 <option
@@ -62,6 +89,7 @@ class WalletForm extends Component {
               name="method"
               id="method"
               data-testid="method-input"
+              onChange={ (e) => this.handleChange(e) }
             >
               <option value="Dinheiro">Dinheiro</option>
               <option value="Cartão de crédito">Cartão de crédito</option>
@@ -75,6 +103,7 @@ class WalletForm extends Component {
               name="tag"
               id="tag"
               data-testid="tag-input"
+              onChange={ (e) => this.handleChange(e) }
             >
               <option value="Alimentação">Alimentação</option>
               <option value="Lazer">Lazer</option>
@@ -91,9 +120,10 @@ class WalletForm extends Component {
               name="description"
               id="description"
               data-testid="description-input"
+              onChange={ (e) => this.handleChange(e) }
             />
           </label>
-
+          <button type="button" onClick={ this.handleClick }>Adicionar Despesa</button>
         </form>
       </div>
     );
