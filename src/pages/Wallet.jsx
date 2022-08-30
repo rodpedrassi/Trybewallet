@@ -7,21 +7,6 @@ import WalletForm from '../components/WalletForm';
 // import { optionCurrencies as optionCurrenciesAction } from '../redux/actions/index';
 
 class Wallet extends Component {
-  // async componentDidMount() {
-  //   await this.getCurrencies();
-  // }
-
-  // getCurrencies = async () => {
-  //   const data = await fetchCurrency();
-  //   const arrayCurrencies = Object.keys(data);
-  //   const wallet = {
-  //     currencies: arrayCurrencies,
-  //   };
-  //   const { dispatch } = this.props;
-  //   dispatch(optionCurrenciesAction(wallet));
-  //   // return arrayCurrencies;
-  // };
-
   render() {
     return (
       <div>
@@ -31,8 +16,5 @@ class Wallet extends Component {
     );
   }
 }
-// Wallet.propTypes = {
-//   dispatch: PropTypes.func.isRequired,
-// };
 
 export default connect()(Wallet);

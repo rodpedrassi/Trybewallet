@@ -6,12 +6,14 @@ import fetchCurrency from '../services/api';
 import {
   optionCurrencies as optionCurrenciesAction,
   saveExpenses as saveExpensesAction,
+  saveTotalExpenses as saveTotalExpensesAction,
 } from '../redux/actions/index';
 
 class WalletForm extends Component {
   state = {
     id: 0,
     value: '',
+    totalExpense: 0,
     currency: 'USD',
     method: 'Dinheiro',
     tag: 'Alimentação',
@@ -32,6 +34,33 @@ class WalletForm extends Component {
     });
   };
 
+  handleClick = async () => {
+    // Pega os valores das moedas e soma pro total e faz o dispatch
+    await this.handleTotal();
+    // Faz o dispatch das contas
+    this.dispatchSaveExpenses();
+    // Incrementa o id e limpa campos
+    this.setState((prev) => ({
+      id: prev.id + 1,
+      value: '',
+      description: '',
+    }));
+  };
+
+  handleTotal = async () => {
+    const actualCurrency = await fetchCurrency();
+    this.setState(({ exchangeRates: actualCurrency }));
+    // Faz a conversão e adiciona pro total
+    const { value, currency, exchangeRates } = this.state;
+    const total = parseFloat(value) * parseFloat(exchangeRates[currency].ask);
+    this.setState((prev) => ({
+      totalExpense: (parseFloat(prev.totalExpense) + total).toFixed(2),
+    }));
+    const { totalExpense } = this.state;
+    const { dispatch } = this.props;
+    dispatch(saveTotalExpensesAction(totalExpense));
+  };
+
   getCurrencies = async () => {
     const data = await fetchCurrency();
     const arrayCurrencies = Object.keys(data);
@@ -40,16 +69,24 @@ class WalletForm extends Component {
     dispatch(optionCurrenciesAction(newCurrencies));
   };
 
-  handleClick = async () => {
+  dispatchSaveExpenses = () => {
     const { dispatch } = this.props;
-    const actualCurrency = await fetchCurrency();
-    this.setState(({ exchangeRates: actualCurrency }));
-    dispatch(saveExpensesAction(this.state));
-    this.setState((prev) => ({ id: prev.id + 1 }));
+    const { id, value, currency, method, tag, description, exchangeRates } = this.state;
+    const stateWithoutTotal = {
+      id,
+      value,
+      currency,
+      method,
+      tag,
+      description,
+      exchangeRates,
+    };
+    dispatch(saveExpensesAction(stateWithoutTotal));
   };
 
   render() {
     const { wallet: { currencies } } = this.props;
+    const { value, description } = this.state;
     return (
       <div>
         <form className="form-group">
@@ -60,6 +97,7 @@ class WalletForm extends Component {
               name="value"
               id="value"
               data-testid="value-input"
+              value={ value }
               onChange={ (e) => this.handleChange(e) }
             />
           </label>
@@ -120,6 +158,7 @@ class WalletForm extends Component {
               name="description"
               id="description"
               data-testid="description-input"
+              value={ description }
               onChange={ (e) => this.handleChange(e) }
             />
           </label>

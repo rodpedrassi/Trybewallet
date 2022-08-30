@@ -5,13 +5,12 @@ import '../css/izi.css';
 
 class Header extends Component {
   state = {
-    total: 0,
     currency: 'BRL',
   };
 
   render() {
-    const { email } = this.props;
-    const { total, currency } = this.state;
+    const { email, totalExpense } = this.props;
+    const { currency } = this.state;
     return (
       <div>
         <header className="header-box">
@@ -19,7 +18,8 @@ class Header extends Component {
             <p data-testid="email-field">{`Usuário: ${email}`}</p>
           </div>
           <div>
-            <span data-testid="total-field">{`Total: ${total}`}</span>
+            <span>Total: </span>
+            <span data-testid="total-field">{`${totalExpense}`}</span>
             <span data-testid="header-currency-field">{currency}</span>
           </div>
         </header>
@@ -30,10 +30,12 @@ class Header extends Component {
 
 Header.propTypes = {
   email: PropTypes.string.isRequired,
+  totalExpense: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   email: state.user.email,
+  totalExpense: state.wallet.totalExpense,
 });
 
 export default connect(mapStateToProps)(Header);

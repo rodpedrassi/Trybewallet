@@ -1,7 +1,8 @@
-import { OPTION_CURRENCIES, SAVE_EXPENSES } from '../actions';
+import { OPTION_CURRENCIES, SAVE_EXPENSES, SAVE_TOTAL_EXPENSES } from '../actions';
 
 const initialState = {
   currencies: [],
+  totalExpense: '0',
   expenses: [],
 };
 
@@ -12,12 +13,16 @@ function walletReducer(state = initialState, action) {
       ...state,
       currencies: action.value,
     };
-
-  case SAVE_EXPENSES:
-    console.log(state);
+  case SAVE_TOTAL_EXPENSES:
     return {
       ...state,
-      expenses: action.value,
+      totalExpense: action.value,
+    };
+
+  case SAVE_EXPENSES:
+    return {
+      ...state,
+      expenses: [...state.expenses, action.value],
     };
   default: return state;
   }
