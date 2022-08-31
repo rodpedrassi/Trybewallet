@@ -2,6 +2,7 @@ export const LOGIN = 'LOGIN';
 export const OPTION_CURRENCIES = 'OPTION_CURRENCIES';
 export const SAVE_EXPENSES = 'SAVE_EXPENSES';
 export const SAVE_TOTAL_EXPENSES = 'SAVE_TOTAL_EXPENSES';
+export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 
 export const login = (value) => ({
   type: LOGIN,
@@ -20,5 +21,10 @@ export const saveExpenses = (value) => ({
 
 export const saveTotalExpenses = (value) => ({
   type: SAVE_TOTAL_EXPENSES,
+  value,
+});
+
+export const deleteExpense = (value) => ({
+  type: DELETE_EXPENSE,
   value,
 });
