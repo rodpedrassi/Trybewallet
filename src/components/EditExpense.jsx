@@ -7,24 +7,21 @@ class EditExpense extends Component {
   state = {
     id: 0,
     value: '',
-    totalExpense: 0,
     currency: '',
     method: 'Dinheiro',
     tag: 'Alimentação',
     description: '',
     exchangeRates: {},
-    editedValue: '0',
   };
 
   componentDidMount() {
     const { expenseToEdit } = this.props;
     const {
-      id, value, totalExpense, currency, method, tag, description, exchangeRates,
+      id, value, currency, method, tag, description, exchangeRates,
     } = expenseToEdit;
     this.setState({
       id,
       value,
-      totalExpense,
       currency,
       method,
       tag,
@@ -42,34 +39,12 @@ class EditExpense extends Component {
 
   handleClick = () => {
     const { dispatch } = this.props;
-    const editedValue = this.handleDiferencyActualPrevValue();
-    this.setState({ editedValue }, () => {
-      dispatch(editExpenseAction(this.state));
-    });
-  };
-
-  handleDiferencyActualPrevValue = () => {
-    const actual = this.actualValueConversion();
-    const prev = this.prevValueConversion();
-    return actual - prev;
-  };
-
-  actualValueConversion = () => {
-    const { value, currency, exchangeRates } = this.state;
-    const total = parseFloat(value) * parseFloat(exchangeRates[currency].ask);
-    return total;
-  };
-
-  prevValueConversion = () => {
-    const { expenseToEdit: { value, currency, exchangeRates } } = this.props;
-    const total = parseFloat(value) * parseFloat(exchangeRates[currency].ask);
-    return total;
+    dispatch(editExpenseAction(this.state));
   };
 
   render() {
     const { value, description, currency, exchangeRates, tag, method } = this.state;
     const currencies = Object.keys(exchangeRates).filter((e) => e !== 'USDT');
-
     return (
       <div>
         <form className="form-group">

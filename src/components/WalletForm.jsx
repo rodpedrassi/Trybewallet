@@ -6,14 +6,13 @@ import fetchCurrency from '../services/api';
 import {
   optionCurrencies as optionCurrenciesAction,
   saveExpenses as saveExpensesAction,
-  saveTotalExpenses as saveTotalExpensesAction,
+  // saveTotalExpenses as saveTotalExpensesAction,
 } from '../redux/actions/index';
 
 class WalletForm extends Component {
   state = {
     id: 0,
     value: '',
-    totalExpense: 0,
     currency: 'USD',
     method: 'Dinheiro',
     tag: 'Alimentação',
@@ -29,13 +28,11 @@ class WalletForm extends Component {
     const { name, value } = target;
     this.setState({
       [name]: value,
-    }, () => {
-      // this.handleButtonDisabled();
     });
   };
 
   handleClick = async () => {
-    await this.handleTotal();
+    await this.getExchangeRates();
     const { wallet: { expenses } } = this.props;
     this.setState({ id: expenses.length }, () => {
       this.dispatchSaveExpenses();
@@ -46,18 +43,9 @@ class WalletForm extends Component {
     }));
   };
 
-  handleTotal = async () => {
+  getExchangeRates = async () => {
     const actualCurrency = await fetchCurrency();
     this.setState(({ exchangeRates: actualCurrency }));
-    // Faz a conversão e adiciona pro total
-    const { value, currency, exchangeRates } = this.state;
-    const total = parseFloat(value) * parseFloat(exchangeRates[currency].ask);
-    this.setState((prev) => ({
-      totalExpense: (parseFloat(prev.totalExpense) + total).toFixed(2),
-    }));
-    const { totalExpense } = this.state;
-    const { dispatch } = this.props;
-    dispatch(saveTotalExpensesAction(totalExpense));
   };
 
   getCurrencies = async () => {
@@ -70,17 +58,7 @@ class WalletForm extends Component {
 
   dispatchSaveExpenses = () => {
     const { dispatch } = this.props;
-    const { id, value, currency, method, tag, description, exchangeRates } = this.state;
-    const stateWithoutTotal = {
-      id,
-      value,
-      currency,
-      method,
-      tag,
-      description,
-      exchangeRates,
-    };
-    dispatch(saveExpensesAction(stateWithoutTotal));
+    dispatch(saveExpensesAction(this.state));
   };
 
   render() {
