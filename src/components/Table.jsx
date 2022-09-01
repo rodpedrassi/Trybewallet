@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { deleteExpense as deleteExpenseAction } from '../redux/actions/index';
+import {
+  deleteExpense as deleteExpenseAction,
+  sendExpenseToEdit as sendExpenseToEditAction,
+} from '../redux/actions/index';
 
 class Table extends Component {
   render() {
-    const { expenses, deleteExpense } = this.props;
+    const { expenses, deleteExpense, sendExpenseToEdit } = this.props;
     return (
       <div>
         <table>
           <thead>
             <tr>
+              <th>ID</th>
               <th>Descrição</th>
               <th>Tag</th>
               <th>Método de pagamento</th>
@@ -23,7 +27,7 @@ class Table extends Component {
             </tr>
           </thead>
           <tbody>
-            {expenses.map((expense) => {
+            {expenses && expenses.map((expense) => {
               const { id, description, tag, method, currency, exchangeRates } = expense;
               const value = parseFloat(expense.value).toFixed(2);
               const convertedValue = (
@@ -31,6 +35,7 @@ class Table extends Component {
               ).toFixed(2);
               return (
                 <tr key={ id }>
+                  <td>{id}</td>
                   <td>{description}</td>
                   <td>{tag}</td>
                   <td>{method}</td>
@@ -40,6 +45,13 @@ class Table extends Component {
                   <td>{convertedValue}</td>
                   <td>Real</td>
                   <td>
+                    <button
+                      type="button"
+                      data-testid="edit-btn"
+                      onClick={ () => sendExpenseToEdit(expense) }
+                    >
+                      Editar
+                    </button>
                     <button
                       type="button"
                       data-testid="delete-btn"
@@ -59,6 +71,7 @@ class Table extends Component {
 }
 Table.propTypes = {
   deleteExpense: propTypes.func.isRequired,
+  sendExpenseToEdit: propTypes.func.isRequired,
   expenses: propTypes.arrayOf(
     propTypes.shape({
       id: propTypes.number,
@@ -83,6 +96,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   deleteExpense: (value) => dispatch(deleteExpenseAction(value)),
+  sendExpenseToEdit: (value) => dispatch(sendExpenseToEditAction(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
