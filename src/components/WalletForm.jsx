@@ -35,13 +35,12 @@ class WalletForm extends Component {
   };
 
   handleClick = async () => {
-    // Pega os valores das moedas e soma pro total e faz o dispatch
     await this.handleTotal();
-    // Faz o dispatch das contas
-    this.dispatchSaveExpenses();
-    // Incrementa o id e limpa campos
-    this.setState((prev) => ({
-      id: prev.id + 1,
+    const { wallet: { expenses } } = this.props;
+    this.setState({ id: expenses.length }, () => {
+      this.dispatchSaveExpenses();
+    });
+    this.setState(() => ({
       value: '',
       description: '',
     }));

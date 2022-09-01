@@ -52,8 +52,12 @@ function walletReducer(state = initialState, action) {
   case EDIT_EXPENSE:
     return {
       ...state,
-      expenses: [...state.expenses
-        .filter((e) => e.id !== action.value.id), action.value]
+      expenses:
+      [
+        ...state.expenses
+          .filter((e) => e.id !== action.value.id),
+        action.value,
+      ]
         .sort((a, b) => Number(a.id) - Number(b.id)),
       totalExpense: (Number(state.totalExpense)
       + Number(action.value.editedValue)).toFixed(2),

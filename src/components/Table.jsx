@@ -14,7 +14,6 @@ class Table extends Component {
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>Descrição</th>
               <th>Tag</th>
               <th>Método de pagamento</th>
@@ -35,7 +34,6 @@ class Table extends Component {
               ).toFixed(2);
               return (
                 <tr key={ id }>
-                  <td>{id}</td>
                   <td>{description}</td>
                   <td>{tag}</td>
                   <td>{method}</td>
